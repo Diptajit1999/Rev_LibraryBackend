@@ -4,7 +4,7 @@ const userRouter = express.Router();
 const bcrypt = require("bcrypt");
 const jwt=require("jsonwebtoken")
 require("dotenv").config()
-userRouter.post("/register", (req, res) => {
+userRouter.post("/api/register", (req, res) => {
   const payload = req.body;
   try {
     bcrypt.hash(payload.password, 10, async (err, hash) => {
@@ -21,7 +21,7 @@ userRouter.post("/register", (req, res) => {
   }
 });
 
-userRouter.post("/login",async(req, res)=>{
+userRouter.post("/api/login",async(req, res)=>{
     const {email,password}=req.body;
 
     try {

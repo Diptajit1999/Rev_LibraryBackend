@@ -16,8 +16,8 @@ const { roleAccess } = require("../middleware/authorization.middleware");
 //   isAdmin: Boolean,
 
 
-
-bookRouter.post("/books", auth, roleAccess, async(req, res) => {
+// Admin adds new books
+bookRouter.post("/api/books", auth, roleAccess, async(req, res) => {
     const payload=req.body
 
     try {
@@ -29,10 +29,81 @@ bookRouter.post("/books", auth, roleAccess, async(req, res) => {
     }
 });
 
-bookRouter.get("/",(req, res) => {
-    res.status(200).send({msg:"geting books"})
+
+
+
+// Returns the details of a specific book identified by its ID.
+bookRouter.get("/api/books/:id",async(req, res) => {
+    const id=req.params.id
+    console.log(req.params)
+    if(!id){
+        res.send({msg:"error",error:"books id is not find"})
+    }
+
+    try {
+        const books=await BookModel.find({_id:id})
+         
+        res.status(200).send({msg:"success",books})
+    } catch (error) {
+        res.status(200).send({msg:error})
+    }
 });
 
+
+// Returns a list of all available books
+bookRouter.get("/api/books",async(req, res) => {
+    const {author,category}= req.query
+   
+
+    try {
+        let query={}
+        if(author){
+            query.author=author
+        }
+        if(category){
+            query.category=category
+        }
+        const books=await BookModel.find(query)
+         
+        res.status(200).send({msg:"success",books})
+    } catch (error) {
+        res.status(200).send({msg:error})
+    }
+});
+
+
+bookRouter.put("/api/books/:id", auth, roleAccess, async (req, res) => {
+    const id = req.params.id;
+    const updates = req.body;
+
+    try {
+        const updatedBook = await BookModel.findByIdAndUpdate(id, updates, { new: true });
+
+        if (!updatedBook) {
+            return res.status(404).send({ msg: "Book not found" });
+        }
+
+        res.status(204).send(); // Success, no content
+    } catch (error) {
+        res.status(500).send({ msg: error });
+    }
+});
+
+bookRouter.delete("/api/books/:id", auth, roleAccess, async (req, res) => {
+    const id = req.params.id;
+
+    try {
+        const deletedBook = await BookModel.findByIdAndDelete(id);
+
+        if (!deletedBook) {
+            return res.status(404).send({ msg: "Book not found" });
+        }
+
+        res.status(204).send(); // Success, no content
+    } catch (error) {
+        res.status(500).send({ msg: error });
+    }
+});
 module.exports = {
   bookRouter,
 };
