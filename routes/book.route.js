@@ -23,7 +23,7 @@ bookRouter.post("/api/books", auth, roleAccess, async(req, res) => {
     try {
         const book=new BookModel(payload)
         await book.save()
-        res.status(200).send({msg:"Book has been added to the book collections"})
+        res.status(201).send({msg:"Book has been added to the book collections"})
     } catch (error) {
         res.status(400).send({msg:error})
     }
@@ -51,6 +51,9 @@ bookRouter.get("/api/books/:id",async(req, res) => {
 
 
 // Returns a list of all available books
+// This endpoint should give only those books whose category is fiction. 
+// give only those books whose author is corey and the category is fiction. 
+// (Should work for all combinations)
 bookRouter.get("/api/books",async(req, res) => {
     const {author,category}= req.query
    
@@ -71,7 +74,7 @@ bookRouter.get("/api/books",async(req, res) => {
     }
 });
 
-
+// admin to update the details of a specific book identified by its ID. 
 bookRouter.put("/api/books/:id", auth, roleAccess, async (req, res) => {
     const id = req.params.id;
     const updates = req.body;
@@ -83,7 +86,7 @@ bookRouter.put("/api/books/:id", auth, roleAccess, async (req, res) => {
             return res.status(404).send({ msg: "Book not found" });
         }
 
-        res.status(204).send(); // Success, no content
+        res.status(204).send({msg:"book has been updated"}); // Success, no content
     } catch (error) {
         res.status(500).send({ msg: error });
     }
@@ -99,7 +102,7 @@ bookRouter.delete("/api/books/:id", auth, roleAccess, async (req, res) => {
             return res.status(404).send({ msg: "Book not found" });
         }
 
-        res.status(204).send(); // Success, no content
+        res.status(202).send(); // Success, no content
     } catch (error) {
         res.status(500).send({ msg: error });
     }

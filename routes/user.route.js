@@ -14,7 +14,7 @@ userRouter.post("/api/register", (req, res) => {
       const userData = new UserModel({ ...payload, password: hash });
       console.log(userData);
       await userData.save();
-      res.status(200).send({ msg: `user has registered ${userData}` });
+      res.status(201).send({ msg: `user has registered ${userData}` });
     });
   } catch (error) {
     res.status(400).send({ msg: error });
@@ -30,7 +30,7 @@ userRouter.post("/api/login",async(req, res)=>{
             bcrypt.compare(password,user.password,(err,result)=>{
                 if(result){
                   const token=jwt.sign({userID:user._id,username:user.name,role:user.isAdmin},process.env.AcessKey)
-                    return res.status(200).send({ msg: "user has logged in",token:token });
+                    return res.status(201).send({ msg: "user has logged in",token:token });
                 }
                 res.status(400).send({ msg: err });
             })
